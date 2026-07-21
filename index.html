@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>问题清单统计 - 按功能Owner</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Noto Sans CJK SC', 'WenQuanYi Micro Hei', 'Microsoft YaHei', sans-serif; background: #f5f7fa; color: #333; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+  h1 { text-align: center; font-size: 24px; margin-bottom: 8px; color: #1a1a2e; }
+  .subtitle { text-align: center; color: #888; font-size: 13px; margin-bottom: 30px; }
+
+  .card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 24px; margin-bottom: 24px; }
+  .card h2 { font-size: 18px; color: #1a1a2e; margin-bottom: 16px; border-bottom: 2px solid #4a6cf7; padding-bottom: 8px; display: inline-block; }
+
+  .chart-wrap { position: relative; height: 420px; margin: 10px 0; }
+  canvas { width: 100% !important; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th, td { padding: 10px 10px; text-align: center; border-bottom: 1px solid #eee; font-size: 13px; }
+  th { background: #f0f3ff; color: #1a1a2e; font-weight: 600; position: sticky; top: 0; }
+  tr:hover td { background: #fafbff; }
+  .highlight { background: #fff8e1 !important; font-weight: 600; }
+  .owner-name { text-align: left; font-weight: 500; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .badge-new { background: #e8f5e9; color: #2e7d32; }
+  .badge-closed { background: #e0f7fa; color: #00838f; }
+
+  .summary-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 24px; }
+  .summary-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 18px 14px; text-align: center; }
+  .summary-card .num { font-size: 28px; font-weight: 700; }
+  .summary-card .label { font-size: 12px; color: #888; margin-top: 4px; }
+  .sc-total .num { color: #4a6cf7; }
+  .sc-closed .num { color: #2e7d32; }
+  .sc-unclosed .num { color: #e65100; }
+  .sc-new .num { color: #6a1b9a; }
+  .sc-newclosed .num { color: #00838f; }
+
+  @media (max-width: 768px) {
+    .summary-cards { grid-template-columns: repeat(2, 1fr); }
+    .chart-wrap { height: 300px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>问题清单统计</h1>
+  <p class="subtitle">按功能Owner统计 · 数据更新于 2026-07-21 · 昨日：2026-07-20</p>
+
+  <div class="summary-cards">
+    <div class="summary-card sc-total">
+      <div class="num" id="totalNum">0</div>
+      <div class="label">总数量</div>
+    </div>
+    <div class="summary-card sc-closed">
+      <div class="num" id="closedNum">0</div>
+      <div class="label">关闭数量</div>
+    </div>
+    <div class="summary-card sc-unclosed">
+      <div class="num" id="unclosedNum">0</div>
+      <div class="label">未关闭数量</div>
+    </div>
+    <div class="summary-card sc-new">
+      <div class="num" id="newNum">0</div>
+      <div class="label">昨日新增</div>
+    </div>
+    <div class="summary-card sc-newclosed">
+      <div class="num" id="newClosedNum">0</div>
+      <div class="label">新增关闭</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>柱状图</h2>
+    <div class="chart-wrap">
+      <canvas id="barChart"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>明细数据</h2>
+    <div style="overflow-x: auto;">
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>功能Owner</th>
+            <th>总数量</th>
+            <th>关闭数量</th>
+            <th>未关闭数量</th>
+            <th>昨日新增</th>
+            <th>新增关闭</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const labels = ["黄可", "Jessie", "龙哥", "志锦", "Doli"];
+const totalData = [476, 392, 307, 161, 48];
+const closedData = [462, 375, 295, 151, 43];
+const unclosedData = [14, 17, 12, 10, 5];
+const yesterdayNewData = [0, 0, 0, 0, 0];
+const yesterdayClosedData = [0, 0, 0, 0, 0];
+
+// Summary cards
+const sumTotal = totalData.reduce((a,b)=>a+b,0);
+const sumClosed = closedData.reduce((a,b)=>a+b,0);
+const sumUnclosed = sumTotal - sumClosed;
+const sumNew = yesterdayNewData.reduce((a,b)=>a+b,0);
+const sumNewClosed = yesterdayClosedData.reduce((a,b)=>a+b,0);
+document.getElementById('totalNum').textContent = sumTotal;
+document.getElementById('closedNum').textContent = sumClosed;
+document.getElementById('unclosedNum').textContent = sumUnclosed;
+document.getElementById('newNum').textContent = sumNew;
+document.getElementById('newClosedNum').textContent = sumNewClosed;
+
+// Data table
+const tbody = document.querySelector('#dataTable tbody');
+labels.forEach((label, i) => {
+  const tr = document.createElement('tr');
+  if (label === '合计') tr.classList.add('highlight');
+  const newCell = yesterdayNewData[i] > 0 ? '<span class="badge badge-new">+'+yesterdayNewData[i]+'</span>' : yesterdayNewData[i];
+  const closedCell = yesterdayClosedData[i] > 0 ? '<span class="badge badge-closed">+'+yesterdayClosedData[i]+'</span>' : yesterdayClosedData[i];
+  tr.innerHTML = `
+    <td class="owner-name">${label}</td>
+    <td><strong>${totalData[i]}</strong></td>
+    <td>${closedData[i]}</td>
+    <td>${unclosedData[i]}</td>
+    <td>${newCell}</td>
+    <td>${closedCell}</td>
+  `;
+  tbody.appendChild(tr);
+});
+
+// Bar chart
+const ctx = document.getElementById('barChart').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: labels,
+    datasets: [
+      {
+        label: '总数量',
+        data: totalData,
+        backgroundColor: '#4a6cf7',
+        borderRadius: 4,
+        borderSkipped: false,
+      },
+      {
+        label: '关闭数量',
+        data: closedData,
+        backgroundColor: '#2e7d32',
+        borderRadius: 4,
+        borderSkipped: false,
+      },
+      {
+        label: '未关闭数量',
+        data: unclosedData,
+        backgroundColor: '#e65100',
+        borderRadius: 4,
+        borderSkipped: false,
+      },
+      {
+        label: '昨日新增',
+        data: yesterdayNewData,
+        backgroundColor: '#6a1b9a',
+        borderRadius: 4,
+        borderSkipped: false,
+      },
+      {
+        label: '新增关闭',
+        data: yesterdayClosedData,
+        backgroundColor: '#00838f',
+        borderRadius: 4,
+        borderSkipped: false,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: { usePointStyle: true, padding: 20, font: { size: 12 } }
+      },
+      tooltip: {
+        callbacks: {
+          label: function(ctx) { return ctx.dataset.label + ': ' + ctx.raw; }
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { font: { size: 12 } }
+      },
+      y: {
+        beginAtZero: true,
+        grid: { color: '#f0f0f0' },
+        ticks: { font: { size: 12 } }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
