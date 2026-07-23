@@ -124,7 +124,7 @@
       "closed": 462,
       "unclosed": 13,
       "yesterday_new": 0,
-      "yesterday_closed": 10,
+      "yesterday_closed": 0,
       "(空)": 0,
       "关闭": 66,
       "已修改": 6,
@@ -142,7 +142,7 @@
       "closed": 375,
       "unclosed": 18,
       "yesterday_new": 0,
-      "yesterday_closed": 9,
+      "yesterday_closed": 2,
       "(空)": 0,
       "关闭": 375,
       "已修改": 0,
@@ -160,7 +160,7 @@
       "closed": 295,
       "unclosed": 11,
       "yesterday_new": 0,
-      "yesterday_closed": 9,
+      "yesterday_closed": 0,
       "(空)": 0,
       "关闭": 273,
       "已修改": 15,
@@ -178,7 +178,7 @@
       "closed": 151,
       "unclosed": 9,
       "yesterday_new": 0,
-      "yesterday_closed": 7,
+      "yesterday_closed": 0,
       "(空)": 0,
       "关闭": 42,
       "已修改": 21,
@@ -196,7 +196,7 @@
       "closed": 43,
       "unclosed": 4,
       "yesterday_new": 0,
-      "yesterday_closed": 4,
+      "yesterday_closed": 3,
       "(空)": 0,
       "关闭": 42,
       "已修改": 1,
@@ -213,6 +213,6 @@
     "total": 1381,
     "closed": 1326,
     "yesterday_new": 0,
-    "yesterday_closed": 39
+    "yesterday_closed": 5
   }
 }
