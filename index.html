@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>问题清单统计 - 按功能Owner</title>
+<title>问题清单统计</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -19,7 +19,6 @@
   th, td { padding: 10px 10px; text-align: center; border-bottom: 1px solid #eee; font-size: 13px; }
   th { background: #f0f3ff; color: #1a1a2e; font-weight: 600; position: sticky; top: 0; }
   tr:hover td { background: #fafbff; }
-  .highlight { background: #fff8e1 !important; font-weight: 600; }
   .owner-name { text-align: left; font-weight: 500; }
   .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
   .badge-new { background: #e8f5e9; color: #2e7d32; }
@@ -39,7 +38,7 @@
 <body>
 <div class="container">
   <h1>问题清单统计</h1>
-  <p class="subtitle">按功能Owner统计 · 数据更新于 2026-07-22 · 昨日：2026-07-21</p>
+  <p class="subtitle">按功能Owner统计 · 数据更新于 2026-7-23 · 昨日：2026-7-22</p>
   <div class="summary-cards">
     <div class="summary-card sc-total"><div class="num" id="totalNum">0</div><div class="label">总数量</div></div>
     <div class="summary-card sc-closed"><div class="num" id="closedNum">0</div><div class="label">关闭数量</div></div>
@@ -57,11 +56,11 @@
 </div>
 <script>
 const labels = ["黄可", "Jessie", "龙哥", "志锦", "Doli"];
-const totalData = [476, 392, 307, 161, 48];
-const closedData = [462, 375, 295, 151, 43];
+const totalData = [458, 384, 305, 161, 48];
+const closedData = [444, 367, 293, 151, 43];
 const unclosedData = [14, 17, 12, 10, 5];
 const yesterdayNewData = [0, 0, 0, 0, 0];
-const yesterdayClosedData = [0, 0, 0, 0, 0];
+const yesterdayClosedData = [12, 12, 7, 9, 4];
 const sumTotal = totalData.reduce((a,b)=>a+b,0);
 const sumClosed = closedData.reduce((a,b)=>a+b,0);
 const sumNew = yesterdayNewData.reduce((a,b)=>a+b,0);
@@ -92,12 +91,7 @@ new Chart(ctx, {
       {label:'新增关闭',data:yesterdayClosedData,backgroundColor:'#00838f',borderRadius:4,borderSkipped:false}
     ]
   },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: {legend:{position:'top',labels:{usePointStyle:true,padding:20,font:{size:12}}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': '+ctx.raw}}}},
-    scales: {x:{grid:{display:false},ticks:{font:{size:12}}},y:{beginAtZero:true,grid:{color:'#f0f0f0'},ticks:{font:{size:12}}}}
-  }
+  options: {responsive: true, maintainAspectRatio: false,plugins: {legend:{position:'top',labels:{usePointStyle:true,padding:20,font:{size:12}}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': '+ctx.raw}}}},scales: {x:{grid:{display:false},ticks:{font:{size:12}}},y:{beginAtZero:true,grid:{color:'#f0f0f0'},ticks:{font:{size:12}}}}}
 });
 </script>
-</body>
-</html>
+</body></html>
