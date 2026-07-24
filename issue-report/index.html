@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>问题清单统计图表</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<style>
+  body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;margin:0;background:#f5f6f8;color:#222}
+  h1{font-size:22px;margin:24px 24px 4px}
+  .sub{margin:0 24px 16px;color:#888;font-size:13px}
+  .card{background:#fff;border-radius:10px;margin:16px 24px;padding:12px 16px 4px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .card h2{font-size:16px;margin:6px 0 2px}
+  .card .note{font-size:12px;color:#999;margin:0 0 8px}
+  .chart{width:100%;height:420px}
+</style>
+</head>
+<body>
+<h1>问题清单统计图表</h1>
+<div class="sub" id="subtitle">数据日期：2026-07-24　·　关闭判定：状态=「关闭」计为已关闭，其余均为未关闭</div>
+<div class="card">
+  <h2>图一：按功能Owner 当前问题数量（已关闭 + 未关闭 = 总数，堆叠）</h2>
+  <p class="note">每条柱 = 该Owner 的总数；蓝色为已关闭，橙色为未关闭。多人协作问题按各 owner 分别计数；功能Owner 为空时按「提出人」统计，故各 owner 合计可能大于实际问题总数。</p>
+  <div id="chart1" class="chart"></div>
+</div>
+<div class="card">
+  <h2>图二：按功能Owner 每日增量（vs 上次快照）</h2>
+  <p class="note" id="chart2note">增量可为正/负。当前为首跑基线，真实增量将在每日自动运行后生成。</p>
+  <div id="chart2" class="chart"></div>
+</div>
+<script>
+const chart1Data=[
+  {"name":"黄可","closed":68,"unclosed":412,"total":480},
+  {"name":"Jessie","closed":391,"unclosed":17,"total":408},
+  {"name":"龙哥","closed":273,"unclosed":33,"total":306},
+  {"name":"志锦","closed":42,"unclosed":118,"total":160},
+  {"name":"元哥","closed":38,"unclosed":16,"total":54},
+  {"name":"Doli","closed":42,"unclosed":5,"total":47},
+  {"name":"伟霞","closed":10,"unclosed":7,"total":17},
+  {"name":"梓垚","closed":0,"unclosed":1,"total":1},
+  {"name":"(空)","closed":6,"unclosed":5,"total":11}
+];
+const chart2Data=[
+  {"name":"黄可","dTotal":0,"dClosed":0,"dMod":0,"dRes":0},
+  {"name":"Jessie","dTotal":0,"dClosed":0,"dMod":0,"dRes":0},
+  {"name":"龙哥","dTotal":0,"dClosed":0,"dMod":0,"dRes":0},
+  {"name":"志锦","dTotal":0,"dClosed":0,"dMod":0,"dRes":0},
+  {"name":"元哥","dTotal":0,"dClosed":0,"dMod":0,"dRes":0},
+  {"name":"Doli","dTotal":0,"dClosed":0,"dMod":0,"dRes":0},
+  {"name":"伟霞","dTotal":0,"dClosed":0,"dMod":0,"dRes":0},
+  {"name":"梓垚","dTotal":0,"dClosed":0,"dMod":0,"dRes":0},
+  {"name":"(空)","dTotal":0,"dClosed":0,"dMod":0,"dRes":0}
+];
+const c1=echarts.init(document.getElementById('chart1'));
+c1.setOption({
+  tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:function(p){let s=p[0].axisValue+'<br/>';let tot=0;p.forEach(x=>{s+=x.marker+x.seriesName+'：'+x.value+'<br/>';tot+=x.value;});s+='<b>合计：'+tot+'</b>';return s;}},
+  legend:{data:['已关闭','未关闭']},
+  grid:{left:50,right:20,bottom:70,top:40},
+  xAxis:{type:'category',data:chart1Data.map(d=>d.name),axisLabel:{interval:0,rotate:25}},
+  yAxis:{type:'value',name:'问题数'},
+  series:[
+    {name:'已关闭',type:'bar',stack:'total',itemStyle:{color:'#5470c6'},data:chart1Data.map(d=>d.closed)},
+    {name:'未关闭',type:'bar',stack:'total',itemStyle:{color:'#ee6666'},data:chart1Data.map(d=>d.unclosed)}
+  ]
+});
+const c2=echarts.init(document.getElementById('chart2'));
+c2.setOption({
+  tooltip:{trigger:'axis',axisPointer:{type:'shadow'}},
+  legend:{data:['昨日新增(Δ总数)','新增关闭(Δ关闭)','新增已修改(Δ已修改)','新增已解决(Δ已解决)']},
+  grid:{left:55,right:20,bottom:70,top:40},
+  xAxis:{type:'category',data:chart2Data.map(d=>d.name),axisLabel:{interval:0,rotate:25}},
+  yAxis:{type:'value',name:'增量(可负)'},
+  series:[
+    {name:'昨日新增(Δ总数)',type:'bar',itemStyle:{color:'#5470c6'},data:chart2Data.map(d=>d.dTotal)},
+    {name:'新增关闭(Δ关闭)',type:'bar',itemStyle:{color:'#91cc75'},data:chart2Data.map(d=>d.dClosed)},
+    {name:'新增已修改(Δ已修改)',type:'bar',itemStyle:{color:'#fac858'},data:chart2Data.map(d=>d.dMod)},
+    {name:'新增已解决(Δ已解决)',type:'bar',itemStyle:{color:'#9a60b4'},data:chart2Data.map(d=>d.dRes)}
+  ]
+});
+window.addEventListener('resize',()=>{c1.resize();c2.resize();});
+</script>
+</body>
+</html>
