@@ -25,32 +25,12 @@
 </div>
 <div class="card">
   <h2>图二：按功能Owner 每日增量（vs 上次快照）</h2>
-  <p class="note" id="chart2note">增量可为正/负。当前为首跑基线，真实增量将在每日自动运行后生成。</p>
+  <p class="note" id="chart2note">增量 vs 上次快照（2026-07-24）</p>
   <div id="chart2" class="chart"></div>
 </div>
 <script>
-const chart1Data=[
-  {"name":"黄可","closed":68,"unclosed":412,"total":480},
-  {"name":"Jessie","closed":391,"unclosed":17,"total":408},
-  {"name":"龙哥","closed":273,"unclosed":33,"total":306},
-  {"name":"志锦","closed":42,"unclosed":118,"total":160},
-  {"name":"元哥","closed":38,"unclosed":16,"total":54},
-  {"name":"Doli","closed":42,"unclosed":5,"total":47},
-  {"name":"伟霞","closed":10,"unclosed":7,"total":17},
-  {"name":"梓垚","closed":0,"unclosed":1,"total":1},
-  {"name":"(空)","closed":6,"unclosed":5,"total":11}
-];
-const chart2Data=[
-  {"name":"黄可","dTotal":0,"dClosed":0,"dMod":0,"dRes":0},
-  {"name":"Jessie","dTotal":0,"dClosed":0,"dMod":0,"dRes":0},
-  {"name":"龙哥","dTotal":0,"dClosed":0,"dMod":0,"dRes":0},
-  {"name":"志锦","dTotal":0,"dClosed":0,"dMod":0,"dRes":0},
-  {"name":"元哥","dTotal":0,"dClosed":0,"dMod":0,"dRes":0},
-  {"name":"Doli","dTotal":0,"dClosed":0,"dMod":0,"dRes":0},
-  {"name":"伟霞","dTotal":0,"dClosed":0,"dMod":0,"dRes":0},
-  {"name":"梓垚","dTotal":0,"dClosed":0,"dMod":0,"dRes":0},
-  {"name":"(空)","dTotal":0,"dClosed":0,"dMod":0,"dRes":0}
-];
+const chart1Data = [{"name": "黄可", "closed": 68, "unclosed": 412, "total": 480}, {"name": "Jessie", "closed": 391, "unclosed": 17, "total": 408}, {"name": "龙哥", "closed": 273, "unclosed": 33, "total": 306}, {"name": "志锦", "closed": 42, "unclosed": 118, "total": 160}, {"name": "元哥", "closed": 38, "unclosed": 16, "total": 54}, {"name": "Doli", "closed": 42, "unclosed": 5, "total": 47}, {"name": "伟霞", "closed": 10, "unclosed": 7, "total": 17}, {"name": "梓垚", "closed": 0, "unclosed": 1, "total": 1}, {"name": "(空)", "closed": 6, "unclosed": 5, "total": 11}];
+const chart2Data = [{"name": "黄可", "dTotal": 0, "dClosed": 0, "dMod": 0, "dRes": 0}, {"name": "Jessie", "dTotal": 0, "dClosed": 0, "dMod": 0, "dRes": 0}, {"name": "龙哥", "dTotal": 0, "dClosed": 0, "dMod": 0, "dRes": 0}, {"name": "志锦", "dTotal": 0, "dClosed": 0, "dMod": 0, "dRes": 0}, {"name": "元哥", "dTotal": 0, "dClosed": 0, "dMod": 0, "dRes": 0}, {"name": "Doli", "dTotal": 0, "dClosed": 0, "dMod": 0, "dRes": 0}, {"name": "伟霞", "dTotal": 0, "dClosed": 0, "dMod": 0, "dRes": 0}, {"name": "梓垚", "dTotal": 0, "dClosed": 0, "dMod": 0, "dRes": 0}, {"name": "(空)", "dTotal": 0, "dClosed": 0, "dMod": 0, "dRes": 0}];
 const c1=echarts.init(document.getElementById('chart1'));
 c1.setOption({
   tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:function(p){let s=p[0].axisValue+'<br/>';let tot=0;p.forEach(x=>{s+=x.marker+x.seriesName+'：'+x.value+'<br/>';tot+=x.value;});s+='<b>合计：'+tot+'</b>';return s;}},
